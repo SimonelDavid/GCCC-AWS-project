@@ -1,4 +1,6 @@
-# Guestbook Cloud Containerized App (GCCC)
+# Guestbook Cloud Containerized App
+
+> 🏫 This project was developed as part of the *Grid, Cluster and Cloud Computing (GCCC)* course at the Faculty of Mathematics and Computer Science, Babeș-Bolyai University.
 
 This project deploys a simple guestbook web application with image uploads using AWS infrastructure, Docker containers, Ansible automation, and Terraform IaC.
 
@@ -107,4 +109,4 @@ __pycache__/
 ```
 
 ---
-*Built as part of the GCCC Cloud DevOps Project.*
+*Built as part of the Grid, Cluster and Cloud Computing (GCCC) course — Faculty of Mathematics and Computer Science, Babeș-Bolyai University.*
