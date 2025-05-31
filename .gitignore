@@ -1,0 +1,4 @@
+guestbook-project/ssh
+terraform.tfstate
+terraform.tfstate.backup
+.terraform*

@@ -1,0 +1,5 @@
+aws_region     = "eu-central-1"
+key_pair_name  = "my-ec2-key"
+s3_bucket_name = "guestbook-image-storage"
+db_username    = "postgres"
+db_password    = "supersecurepass123"

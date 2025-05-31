@@ -1,0 +1,75 @@
+- name: Update apt packages
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install Docker using official script
+  shell: |
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sh get-docker.sh
+  args:
+    creates: /usr/bin/docker
+
+- name: Install Docker Compose
+  get_url:
+    url: https://github.com/docker/compose/releases/download/v2.24.2/docker-compose-linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+
+- name: Ensure Docker is started
+  systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Install PostgreSQL client
+  apt:
+    name: postgresql-client
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Create reviews table in PostgreSQL
+  shell: |
+    DB_HOST="{{ db_host.split(':')[0] }}"
+    DB_PORT="{{ db_host.split(':')[1] }}"
+    PGPASSWORD={{ db_pass }} psql \
+      -h $DB_HOST \
+      -p $DB_PORT \
+      -U {{ db_user }} \
+      -d guestbook \
+      -c "CREATE TABLE IF NOT EXISTS reviews (
+          id UUID PRIMARY KEY,
+          text TEXT NOT NULL,
+          image_url TEXT NOT NULL,
+          thumb_url TEXT NOT NULL,
+          created_at TIMESTAMP NOT NULL
+        );"
+  args:
+    executable: /bin/bash
+
+- name: Create app directory
+  file:
+    path: /opt/app
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Template docker-compose with DB/S3 env vars
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/app/docker-compose.yml
+    mode: '0644'
+
+- name: Copy application files
+  copy:
+    src: app/
+    dest: /opt/app/
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Run docker-compose
+  command: docker-compose up -d
+  args:
+    chdir: /opt/app

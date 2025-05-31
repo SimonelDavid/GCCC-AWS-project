@@ -1,0 +1,20 @@
+version: '3'
+services:
+  app-frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - app-backend
+
+  app-backend:
+    build:
+      context: ./backend
+    environment:
+      - DB_HOST={{ db_host.split(':')[0] }}
+      - DB_PORT={{ db_host.split(':')[1] }}
+      - DB_USER={{ db_user }}
+      - DB_PASS={{ db_pass }}
+      - DB_NAME=guestbook
+      - S3_BUCKET={{ s3_bucket }}
